@@ -13,7 +13,7 @@ except:
     print("Cos poszlo nie tak... :(")
 
 cursor = connection.cursor()
-
+inserty = []
 def get_klient_ids(cursor):
     cursor.execute("SELECT klientid FROM klient")
     klient_ids = [row[0] for row in cursor.fetchall()]
@@ -60,6 +60,8 @@ def InsertRandomKlient(howMany, cursor):
             (:1, :2, :3, :4, :5, TO_DATE(:6, 'YYYY-MM-DD'))
             """,
             (i, Imie, Nazwisko, email, phone, registrationDate))
+        inserty.append(f"INSERT INTO CLIENT (klientid, imie, nazwisko, email, numer_telefonu, data_rejestracji) "
+                       f"VALUES ({i}, '{Imie}', '{Nazwisko}', '{email}', '{phone}', TO_DATE('{registrationDate}', 'YYYY-MM-DD'))")
 
 
 def InsertRandomAdres(howMany, cursor, klient_ids):
@@ -97,6 +99,8 @@ def InsertRandomAdres(howMany, cursor, klient_ids):
             (:1, :2, :3, :4, :5)
             """,
             (i, ulica, miasto, kod, klient_klientid))
+        inserty.append(f"INSERT INTO CLIENT (adresid, ulica, miasto, kod_pocztowy, klient_klientid)  "
+                       f"VALUES ({i}, '{ulica}', '{miasto}', '{kod}', '{klient_klientid}')")
 
 def InsertRandomKategoriaModelu(howMany, cursor):
     nazwy_kategorii = ['Elektryczne', 'Spalinowe', 'Odrzutowe', 'Drewniane', 'Z tworzyw sztucznych', 'Z włókna węglowego', 'Szybowce', 'Szkoleniowe', 'Wojskowe']
@@ -131,6 +135,8 @@ def InsertRandomKategoriaModelu(howMany, cursor):
             (:1, :2, :3)
             """,
             (i, nazwa_kategorii, opis_kategorii))
+        inserty.append(f"INSERT INTO CLIENT  (kategoriaid, nazwa_kategorii, opis_kategorii)  "
+                       f"VALUES ({i}, '{nazwa_kategorii}', '{opis_kategorii}')")
 def InsertRandomKodRabatowy(howMany, cursor):
 
     Status = ['True', 'False']
@@ -161,6 +167,8 @@ def InsertRandomKodRabatowy(howMany, cursor):
             (:1, :2, :3, :4, :5)
             """,
             (i, wartosc_rabatu, data_waznosci, status, kod))
+        inserty.append(f"INSERT INTO CLIENT  (kodrabatowyid,wartosc_rabatu, data_waznosci,status_aktywny,kod)   "
+                       f"VALUES ({i}, '{wartosc_rabatu}', '{data_waznosci}', {status}, {kod})")
 def InsertRandomModelSamolotu(howMany, cursor, kategorie):
     if not kategorie:
         print("Cannot add model address, create a category first")
@@ -193,7 +201,8 @@ def InsertRandomModelSamolotu(howMany, cursor, kategorie):
             (:1, :2, :3, :4, :5)
             """,
             (i, nazwa_modelu, cena, ilosc_w_magazynie, kategoria_modelu))
-
+        inserty.append(f"INSERT INTO CLIENT  (modelid, nazwa_modelu, cena, ilosc_w_magazynie, kategoria_modelu_kategoriaid)   "
+                       f"VALUES ({i}, '{nazwa_modelu}', '{cena}', {ilosc_w_magazynie}, {kategoria_modelu})")
 def InsertRandomZamowienie(howMany, cursor, klient_ids):
     if not klient_ids:
         print("Cannot add orders, create clients first")
@@ -227,7 +236,9 @@ def InsertRandomZamowienie(howMany, cursor, klient_ids):
             """,
             (i + 1, data_zamowienia, status_zamowienia, status_platnosci, kwota_zamowienia,
              metoda_platnosci, klientid))
-
+        inserty.append(
+            f"INSERT INTO CLIENT  (zamowienieid, data_zamowienia, status_zamowienia, status_platnosci, kwota_zamowienia, metoda_platnosci, klientid)    "
+            f"VALUES ({i+1}, '{data_zamowienia}', '{status_zamowienia}', {status_platnosci}, {kwota_zamowienia}, {metoda_platnosci}, {klientid})")
 def InsertRandomZamowienieProdukt(howMany, cursor, zamowienie_ids, produkt_ids):
     if not zamowienie_ids:
         print("Cannot add order products, create orders first")
@@ -256,7 +267,9 @@ def InsertRandomZamowienieProdukt(howMany, cursor, zamowienie_ids, produkt_ids):
             (:1, :2, :3, :4)
             """,
             (i + 1, zamowienieid, produktid, ilosc))
-
+        inserty.append(
+            f"INSERT INTO CLIENT  (zamowienieproduktid, zamowienieid, produktid, ilosc)  "
+            f"VALUES ({i+1}, '{zamowienieid}', '{produktid}', {ilosc})")
 def InsertRandomPrzesylka(howMany, cursor, zamowienie_ids):
     if not zamowienie_ids:
         print("Cannot add shipments, create orders first")
@@ -284,7 +297,9 @@ def InsertRandomPrzesylka(howMany, cursor, zamowienie_ids):
             (:1, :2, :3, :4)
             """,
             (i + 1, data_wysylki, status_przesylki, zamowienieid))
-
+        inserty.append(
+            f"INSERT INTO CLIENT  (przesylkaid, data_wysylki, status_przesylki, zamowienieid)   "
+            f"VALUES ({i + 1}, '{data_wysylki}', '{status_przesylki}', {zamowienieid})")
 def InsertRandomRecenzja(howMany, cursor, produkt_ids, klient_ids):
     if not produkt_ids:
         print("Cannot add reviews, create products first")
@@ -315,6 +330,9 @@ def InsertRandomRecenzja(howMany, cursor, produkt_ids, klient_ids):
             (:1, :2, :3, :4, :5, :6)
             """,
             (i + 1, ocena, komentarz, data_dodania, produktid, klientid))
+        inserty.append(
+            f"INSERT INTO CLIENT  (recenzjaid, ocena, komentarz, data_dodania, produktid, klientid)  "
+            f"VALUES ({i + 1}, '{ocena}', '{komentarz}', {data_dodania}, {produktid}, {klientid})")
 def InsertRandomReklamacje(howMany, cursor, klient_ids):
     if not klient_ids:
         print("Cannot add complaints, create clients first")
@@ -344,7 +362,9 @@ def InsertRandomReklamacje(howMany, cursor, klient_ids):
             (:1, :2, :3, :4, :5)
             """,
             (i + 1, data_zlozenia, status_reklamacji, rozpatrzenie, klient_klientid))
-
+        inserty.append(
+            f"INSERT INTO CLIENT  (reklamacjaid, data_zlozenia, status_reklamacji, rozpatrzenie, klient_klientid)  "
+            f"VALUES ({i + 1}, '{data_zlozenia}', '{status_reklamacji}', {rozpatrzenie}, {klient_klientid})")
 def InsertRandomKontrolaJakosci(howMany, cursor, produkt_ids):
     if not produkt_ids:
         print("Cannot add quality controls, create products first")
@@ -372,6 +392,9 @@ def InsertRandomKontrolaJakosci(howMany, cursor, produkt_ids):
             (:1, :2, :3, :4)
             """,
             (i + 1, data_kontroli, wynik_kontroli, produktid))
+        inserty.append(
+            f"INSERT INTO CLIENT  (kontrolajakosciid, data_kontroli, wynik_kontroli, produktid) "
+            f"VALUES ({i + 1}, '{data_kontroli}', '{wynik_kontroli}', {produktid})")
 def InsertRandomFaktura(howMany, cursor, zamowienie_ids):
     if not zamowienie_ids:
         print("Cannot add invoices, create orders first")
@@ -398,7 +421,47 @@ def InsertRandomFaktura(howMany, cursor, zamowienie_ids):
             (:1, :2, :3, :4, :5)
             """,
             (i + 1, numer_faktury, data_wystawienia, kwota, zamowienie_zamowienieid))
+        inserty.append(
+            f"INSERT INTO CLIENT   (fakturaid, numer_faktury, data_wystawienia, kwota, zamowienie_zamowienieid)"
+            f"VALUES ({i + 1}, '{numer_faktury}', '{data_wystawienia}', {kwota}, {zamowienie_zamowienieid})")
 
+
+def InsertRandomFaktura2(howMany, cursor, zamowienie_ids):
+    if not zamowienie_ids:
+        print("Cannot add invoices, create orders first")
+        return
+
+    cursor.execute("SELECT fakturaid FROM faktura")
+    rows = cursor.fetchall()
+    if rows:
+        var = int(rows[-1][0]) + 1
+    else:
+        var = 1
+
+    if howMany > len(zamowienie_ids):
+        howMany = len(zamowienie_ids)
+        print(f"Only {howMany} invoices can be created as there are only {len(zamowienie_ids)} unique orders.")
+
+    for i in range(var, howMany + var):
+        numer_faktury = random.randint(5, 9999)
+        data_wystawienia = datetime.now() - timedelta(days=random.randint(1, 30))
+        kwota = round(random.uniform(100, 10000), 2)
+        zamowienie_zamowienieid = random.choice(zamowienie_ids)
+
+        # Usuwamy zamowienie_zamowienieid z listy, aby uniknąć przypisania tego samego zamówienia do innej faktury
+        zamowienie_ids.remove(zamowienie_zamowienieid)
+
+        cursor.execute(
+            """
+            INSERT INTO faktura 
+            (fakturaid, numer_faktury, data_wystawienia, kwota, zamowienie_zamowienieid) 
+            VALUES 
+            (:1, :2, :3, :4, :5)
+            """,
+            (i + 1, numer_faktury, data_wystawienia, kwota, zamowienie_zamowienieid))
+        inserty.append(
+            f"INSERT INTO faktura (fakturaid, numer_faktury, data_wystawienia, kwota, zamowienie_zamowienieid) "
+            f"VALUES ({i + 1}, '{numer_faktury}', '{data_wystawienia}', {kwota}, {zamowienie_zamowienieid})")
 #######################################################
 howMany = int(input(" 0 - Dodaj rekordy do wszystkich tabel \n" " 1 - Dodaj rekordy do jednej tabeli \n"))
 
@@ -496,3 +559,10 @@ else:
 
 connection.commit()
 connection.close()
+
+
+#print(inserty)
+#with open('Inserty.txt', 'w', encoding='utf-8') as file:
+#    for insert in inserty:
+#        file.write(insert)
+#        file.write("\n")

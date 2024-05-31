@@ -1,0 +1,4 @@
+INSERT INTO CLIENT (klientid, imie, nazwisko, email, numer_telefonu, data_rejestracji) VALUES (15, 'Dariusz', 'Szymański', 'dariusz.szymański2865@gmail.com', '816632157', TO_DATE('2024-05-07', 'YYYY-MM-DD'))
+INSERT INTO CLIENT (klientid, imie, nazwisko, email, numer_telefonu, data_rejestracji) VALUES (16, 'Barbara', 'Krawczyk', 'barbara.krawczyk1825@hotmail.com', '530959134', TO_DATE('2024-05-07', 'YYYY-MM-DD'))
+INSERT INTO CLIENT (klientid, imie, nazwisko, email, numer_telefonu, data_rejestracji) VALUES (17, 'Filip', 'Szymański', 'filip.szymański1487@gmail.com', '654416809', TO_DATE('2024-05-07', 'YYYY-MM-DD'))
+INSERT INTO CLIENT (klientid, imie, nazwisko, email, numer_telefonu, data_rejestracji) VALUES (18, 'Ewa', 'Krawczyk', 'ewa.krawczyk2920@yahoo.com', '375098917', TO_DATE('2024-05-07', 'YYYY-MM-DD'))
